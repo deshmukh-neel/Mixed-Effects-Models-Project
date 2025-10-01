@@ -1,16 +1,29 @@
 import dash
-from dash import html
+from dash import html, Dash, dcc, html, Input, Output, callback
 
 # Initialize Dash app
 app = dash.Dash(__name__)
 
-# Define layout
 app.layout = html.Div([
-    html.H1("Hi guys!"),
-    html.P("Testing Render for our app deployment.")
+    html.H6("Change the value in the text box to see callbacks in action!"),
+    html.Div([
+        "Input: ",
+        dcc.Input(id='my-input', value='initial value', type='text')
+    ]),
+    html.Br(),
+    html.Div(id='my-output'),
+
 ])
 
-# Expose server for deployment (important for Render/Heroku)
+
+@callback(
+    Output(component_id='my-output', component_property='children'),
+    Input(component_id='my-input', component_property='value')
+)
+def update_output_div(input_value):
+    return f'Output: {input_value}'
+
+# Expose server for deployment
 server = app.server
 
 if __name__ == "__main__":
