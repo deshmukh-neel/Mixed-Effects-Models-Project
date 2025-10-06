@@ -1,6 +1,12 @@
 
 from dash import Dash, html, dcc, Input, Output, State
 import dash_bootstrap_components as dbc
+import plotly.express as px
+
+# Example figure
+df = px.data.iris()   # built-in dataset
+fig = px.scatter(df, x="sepal_width", y="sepal_length", color="species",
+                 title="Iris Sepal Width vs Length")
 
 # Choose a Bootstrap theme (optional) – e.g. BOOTSTRAP, DARKLY, etc.
 # But you can also just use CSS custom properties as above.
@@ -67,15 +73,21 @@ def serve_layout():
                             ),
                             html.Div(
                                 [
-                                    html.H2("Let's Dive in....\n", id="main"),
+                                    html.H2("Let's Dive into Linear Regression\n", id="main"),
                                     dcc.Markdown(
                                         """
                                      
-                                        ### Intro to Linear Regression
+                                        ### What can one predictor tell us about data science salaries?
 
                                         predicting stuff
+                                        """
+                                    ), 
+                                    dcc.Graph(figure=fig),
 
-                                        ### Expanding to Multiple Linear Regression
+                                    dcc.Markdown(
+                                        """
+
+                                        ### How about multiple predictors?
 
                                         predicting more stuff
 
@@ -111,4 +123,4 @@ app.layout = serve_layout
 server = app.server
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run(debug=True)

@@ -1,3 +1,4 @@
+
 :root {
   --bg-main: #FFFFFF;
   --bg-alt: #F8F9FA;
@@ -13,16 +14,16 @@ body {
   color: var(--text-main);
 }
 .header {
-  height: 60px;              /* increase height */
+  height: 60px;              
   display: flex;
   align-items: center;       
 }
 
 .navbar-brand.title {
-  font-size: 1.25rem;        /* your larger font size */
+  font-size: 1.25rem;        
   font-weight: 600;
-  line-height: 1.2;          /* prevent clipping if font ascenders are tall */
-  white-space: nowrap;       /* optional: keep on one line */
+  line-height: 1.2;          
+  white-space: nowrap;       
 }
 
 .subtitle {
@@ -43,13 +44,13 @@ body {
   color: var(--text-main);
   min-height: 100vh;
 }
-/* Layout wrapper */
+
 .layout-container {
   display: flex;
-  min-height: calc(100vh - 80px); /* subtract navbar height */
+  min-height: calc(100vh - 80px); 
 }
 
-/* Sidebar */
+
 .sidebar {
   width: 250px;
   background-color: var(--bg-alt);
@@ -73,7 +74,7 @@ body {
   border-radius: 0.5rem;
 }
 
-/* Content */
+
 .content {
   flex: 1;
   padding: 2rem;
@@ -81,7 +82,7 @@ body {
   color: var(--text-main);
 }
 
-/* Sidebar */
+
 .sidebar {
   width: 250px;
   background-color: var(--bg-alt);
@@ -98,14 +99,24 @@ html {
 }
 
 .section {
-  scroll-margin-top: 90px; /* optional: avoids headings hiding behind navbar */
+  scroll-margin-top: 90px; 
 }
 
-/* Mobile: make sidebar a drawer that overlays content */
+
 @media (max-width: 768px) {
   .layout-container { position: relative; }
   .sidebar {
     position: fixed; top: 80px; left: 0; height: calc(100% - 80px); z-index: 1000;
     box-shadow: 0 0 20px rgba(0,0,0,.2);
   }
+}
+/* Increase space after headings */
+h1, h2, h3 {
+  margin-bottom: 20px;   /* adjust as needed */
+}
+
+/* Increase line spacing for Markdown paragraphs */
+p {
+  line-height: 1.8;       /* improves readability */
+  margin-bottom: 15px;
 }
