@@ -24,11 +24,11 @@ def graphs_full(data_file):
 
     # Custom colors
     colors = {
-        "UC Berkeley": "#FDB515",    # Gold
-        "Stanford": "#d62728",       # Cardinal Red
-        "UC San Diego": "#00629B",   # Triton Blue
-        "San Jose State": "#7ee081", # Spartan Green
-        "UCLA": "#bf94e4"            # Bruin Purple
+        "UC Berkeley": "#FDB515",    
+        "Stanford": "#d62728",       
+        "UC San Diego": "#00629B",   
+        "San Jose State": "#7ee081", 
+        "UCLA": "#bf94e4"            
     }
 
 
