@@ -36,10 +36,10 @@ def graphs_full(data_file):
     fig = go.Figure()
 
     for uni in universities:
-    group = df[df["masters_university"] == uni]
-    coeffs = np.polyfit(group["predicted_salary"], group["first_job_salary"], 1)
-    x_line = np.linspace(group["predicted_salary"].min(), group["predicted_salary"].max(), 100)
-    y_line = coeffs[0] * x_line + coeffs[1]
+        group = df[df["masters_university"] == uni]
+        coeffs = np.polyfit(group["predicted_salary"], group["first_job_salary"], 1)
+        x_line = np.linspace(group["predicted_salary"].min(), group["predicted_salary"].max(), 100)
+        y_line = coeffs[0] * x_line + coeffs[1]
 
     # Scatter points
     fig.add_trace(
@@ -72,10 +72,10 @@ def graphs_full(data_file):
     # Frame: "All Universities"
     frame_all = []
     for uni in universities:
-    group = df[df["masters_university"] == uni]
-    coeffs = np.polyfit(group["predicted_salary"], group["first_job_salary"], 1)
-    x_line = np.linspace(group["predicted_salary"].min(), group["predicted_salary"].max(), 100)
-    y_line = coeffs[0] * x_line + coeffs[1]
+        group = df[df["masters_university"] == uni]
+        coeffs = np.polyfit(group["predicted_salary"], group["first_job_salary"], 1)
+        x_line = np.linspace(group["predicted_salary"].min(), group["predicted_salary"].max(), 100)
+        y_line = coeffs[0] * x_line + coeffs[1]
 
     frame_all.append(
         go.Scatter(
@@ -101,7 +101,7 @@ def graphs_full(data_file):
 
     # Frames for each individual university
     for uni in universities:
-    frame_uni = []
+        frame_uni = []
     for other_uni in universities:
         group = df[df["masters_university"] == other_uni]
         coeffs = np.polyfit(group["predicted_salary"], group["first_job_salary"], 1)
@@ -148,18 +148,18 @@ def graphs_full(data_file):
     ]
 
     for uni in universities:
-    buttons.append(
-        dict(
-            label=uni,
-            method="animate",
-            args=[
-                [uni],
-                {"frame": {"duration": 500, "redraw": True},
-                    "mode": "immediate",
-                    "transition": {"duration": 400}}
-            ]
+        buttons.append(
+            dict(
+                label=uni,
+                method="animate",
+                args=[
+                    [uni],
+                    {"frame": {"duration": 500, "redraw": True},
+                        "mode": "immediate",
+                        "transition": {"duration": 400}}
+                ]
+            )
         )
-    )
 
     # --- Layout ---
     fig.update_layout(

@@ -2,14 +2,23 @@
 from dash import Dash, html, dcc, Input, Output, State
 import dash_bootstrap_components as dbc
 import plotly.express as px
+import statsmodels.formula.api as smf
+from graphs import *
+import pandas as pd
+from Plots.graphs_full import *
+from Plots.graphs_slr import *
 
-# Example figure
-df = px.data.iris()   # built-in dataset
-fig = px.scatter(df, x="sepal_width", y="sepal_length", color="species",
-                 title="Iris Sepal Width vs Length")
 
-# Choose a Bootstrap theme (optional) – e.g. BOOTSTRAP, DARKLY, etc.
-# But you can also just use CSS custom properties as above.
+data = pd.read_csv("Data/masters_salary.csv")
+
+
+me_fig = build_mixed_effects_figure()
+me_pred_fig = build_predicted_vs_actual_figure(data)
+
+slr_fig = graph_slr("Data/masters_salary.csv")
+mlr_fig = graphs_full("Data/masters_salary.csv")
+
+
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 def serve_layout():
@@ -82,7 +91,7 @@ def serve_layout():
                                         predicting stuff
                                         """
                                     ), 
-                                    dcc.Graph(figure=fig),
+                                    dcc.Graph(figure=slr_fig),
 
                                     dcc.Markdown(
                                         """
@@ -95,6 +104,7 @@ def serve_layout():
                                         cool interactive stuff
                                         """
                                     ),
+                                    dcc.Graph(figure=mlr_fig)
                                 ],
                                 className="section",
                             ),

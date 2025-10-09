@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.graph_objs as go
 
 
-# Simple OLS helper
+
 def ols_fit(x, y):
     X = np.c_[np.ones(len(x)), x]
     beta, _, _, _ = np.linalg.lstsq(X, y, rcond=None)
@@ -12,11 +12,11 @@ def ols_fit(x, y):
 
 def graph_slr(data_file):
     
-    # Load data
+
     df = pd.read_csv(data_file)
     df.columns = [c.strip() for c in df.columns]
 
-    # Columns
+
     group_col = "masters_university"
     y_col = "first_job_salary"
     predictors = [
@@ -34,13 +34,13 @@ def graph_slr(data_file):
         "UCLA": "#bf94e4"
     }
 
-    # Clean dataframe
+
     df = df[[group_col, y_col] + [p[0] for p in predictors]].dropna().copy()
     groups = sorted(df[group_col].unique())
 
-    # Build traces and layout info
+
     all_traces = []
-    blocks = []  # (start_idx, n_point_traces, n_group_line_traces, fixed_idx)
+    blocks = []  
 
     for p_idx, (x_col, x_label) in enumerate(predictors):
         dfp = df[[group_col, x_col, y_col]].copy()
@@ -53,7 +53,7 @@ def graph_slr(data_file):
         n_point_traces = 0
         n_group_line_traces = 0
 
-        # Scatter points per university
+
         for g in groups:
             dfg = dfp[dfp[group_col] == g]
             color = colors.get(g, "#999999")
@@ -70,7 +70,7 @@ def graph_slr(data_file):
             ))
             n_point_traces += 1
 
-        # Regression lines per university
+    
         for g in groups:
             dfg = dfp[dfp[group_col] == g]
             color = colors.get(g, "#999999")
@@ -92,7 +92,7 @@ def graph_slr(data_file):
             ))
             n_group_line_traces += 1
 
-        # Fixed/global line
+    
         all_traces.append(go.Scatter(
             x=x_line,
             y=y_fe,
@@ -106,7 +106,6 @@ def graph_slr(data_file):
 
         blocks.append((start_idx, n_point_traces, n_group_line_traces, len(all_traces) - 1))
 
-    # --- Build Figure ---
     fig = go.Figure(data=all_traces)
 
     fig.update_layout(
@@ -130,14 +129,12 @@ def graph_slr(data_file):
             gridcolor="rgba(0,0,0,0.08)", zeroline=False
         ),
         annotations=[dict(
-            text="Tip: click university names in the legend to toggle their data/lines.",
             xref="paper", yref="paper", x=0.95, y=1.12,
             showarrow=False, font=dict(size=12, color="#444")
         )],
     )
     fig.update_xaxes(title=predictors[0][1])
 
-    # --- Add Radio Buttons to Switch Predictors ---
     buttons = []
     n_groups = len(groups)
 
@@ -146,17 +143,17 @@ def graph_slr(data_file):
         showleg = []
         for idx_block, (start_idx, n_pts, n_lines, fixed_idx) in enumerate(blocks):
             if idx_block == p_idx:
-                # For GPA → show scatter + lines
+
                 if x_col == "masters_gpa":
                     vis.extend([True] * n_pts)
                     showleg.extend([True] * n_pts)
                 else:
                     vis.extend([False] * n_pts)
                     showleg.extend([False] * n_pts)
-                # Regression lines (legendonly visible)
+        
                 vis.extend(["legendonly"] * n_lines)
                 showleg.extend([True] * n_lines)
-                # Fixed line
+        
                 vis.append(True)
                 showleg.append(True)
             else:
