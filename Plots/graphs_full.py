@@ -32,7 +32,6 @@ def graphs_full(data_file):
     }
 
 
-    # --- Create base figure with all universities ---
     fig = go.Figure()
 
     for uni in universities:
@@ -41,7 +40,6 @@ def graphs_full(data_file):
         x_line = np.linspace(group["predicted_salary"].min(), group["predicted_salary"].max(), 100)
         y_line = coeffs[0] * x_line + coeffs[1]
 
-    # Scatter points
     fig.add_trace(
         go.Scatter(
             x=group["predicted_salary"],
@@ -54,7 +52,7 @@ def graphs_full(data_file):
         )
     )
 
-    # Regression line
+
     fig.add_trace(
         go.Scatter(
             x=x_line,
@@ -66,10 +64,9 @@ def graphs_full(data_file):
         )
     )
 
-    # --- Define frames for animation ---
+
     frames = []
 
-    # Frame: "All Universities"
     frame_all = []
     for uni in universities:
         group = df[df["masters_university"] == uni]
@@ -99,7 +96,6 @@ def graphs_full(data_file):
 
     frames.append(go.Frame(name="All", data=frame_all))
 
-    # Frames for each individual university
     for uni in universities:
         frame_uni = []
     for other_uni in universities:
@@ -130,10 +126,9 @@ def graphs_full(data_file):
         )
     frames.append(go.Frame(name=uni, data=frame_uni))
 
-    # Attach frames
+ 
     fig.frames = frames
 
-    # --- Dropdown buttons ---
     buttons = [
     dict(
         label="All Universities",
@@ -163,22 +158,21 @@ def graphs_full(data_file):
 
     # --- Layout ---
     fig.update_layout(
-    title="Mixed Effects Model: Predicted vs Actual Salary by University",
-    xaxis_title="Predicted Salary",
-    yaxis_title="Actual Salary",
-    template="plotly_white",
-    width=1200,
-    height=700,
-    updatemenus=[{
-        "buttons": buttons,
-        "direction": "down",
-        "showactive": True,
-        "x": 1.18,
-        "xanchor": "left",
-        "y": 1.05,
-        "yanchor": "top"
-    }],
-    legend_title_text="University"
-    )
-
+        title="Mixed Effects Model: Predicted vs Actual Salary by University",
+        xaxis_title="Predicted Salary",
+        yaxis_title="Actual Salary",
+        template="plotly_white",
+        width=1200,
+        height=700,
+        updatemenus=[{
+            "buttons": buttons,
+            "direction": "down",
+            "showactive": True,
+            "x": 1.18,
+            "xanchor": "left",
+            "y": 1.05,
+            "yanchor": "top"
+        }],
+        legend_title_text="University"
+        )
     return fig
