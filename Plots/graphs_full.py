@@ -40,6 +40,7 @@ def graphs_full(data_file):
         x_line = np.linspace(group["predicted_salary"].min(), group["predicted_salary"].max(), 100)
         y_line = coeffs[0] * x_line + coeffs[1]
 
+<<<<<<< HEAD
     fig.add_trace(
         go.Scatter(
             x=group["predicted_salary"],
@@ -49,9 +50,22 @@ def graphs_full(data_file):
             marker=dict(size=7, opacity=0.7, color=colors[uni]),
             hovertext=[uni]*len(group),
             hovertemplate="<b>%{hovertext}</b><br>Predicted: %{x:.0f}<br>Actual: %{y:.0f}<extra></extra>"
+=======
+        # Scatter points
+        fig.add_trace(
+            go.Scatter(
+                x=group["predicted_salary"],
+                y=group["first_job_salary"],
+                mode="markers",
+                name=uni,
+                marker=dict(size=7, opacity=0.7, color=colors[uni]),
+                hovertext=[uni]*len(group),
+                hovertemplate="<b>%{hovertext}</b><br>Predicted: %{x:.0f}<br>Actual: %{y:.0f}<extra></extra>"
+            )
+>>>>>>> 16f4f20b4bfeb830122364e93dcad08829375b40
         )
-    )
 
+<<<<<<< HEAD
 
     fig.add_trace(
         go.Scatter(
@@ -61,8 +75,19 @@ def graphs_full(data_file):
             name=f"{uni} Line",
             line=dict(color=colors[uni], width=2),
             showlegend=False
+=======
+        # Regression line
+        fig.add_trace(
+            go.Scatter(
+                x=x_line,
+                y=y_line,
+                mode="lines",
+                name=f"{uni} Line",
+                line=dict(color=colors[uni], width=2),
+                showlegend=False
+            )
+>>>>>>> 16f4f20b4bfeb830122364e93dcad08829375b40
         )
-    )
 
 
     frames = []
@@ -74,72 +99,72 @@ def graphs_full(data_file):
         x_line = np.linspace(group["predicted_salary"].min(), group["predicted_salary"].max(), 100)
         y_line = coeffs[0] * x_line + coeffs[1]
 
-    frame_all.append(
-        go.Scatter(
-            x=group["predicted_salary"],
-            y=group["first_job_salary"],
-            mode="markers",
-            marker=dict(size=7, opacity=0.7, color=colors[uni]),
-            name=uni
+        frame_all.append(
+            go.Scatter(
+                x=group["predicted_salary"],
+                y=group["first_job_salary"],
+                mode="markers",
+                marker=dict(size=7, opacity=0.7, color=colors[uni]),
+                name=uni
+            )
         )
-    )
-    frame_all.append(
-        go.Scatter(
-            x=x_line,
-            y=y_line,
-            mode="lines",
-            line=dict(color=colors[uni], width=2),
-            opacity=1,
-            showlegend=False
+        frame_all.append(
+            go.Scatter(
+                x=x_line,
+                y=y_line,
+                mode="lines",
+                line=dict(color=colors[uni], width=2),
+                opacity=1,
+                showlegend=False
+            )
         )
-    )
 
     frames.append(go.Frame(name="All", data=frame_all))
 
     for uni in universities:
         frame_uni = []
-    for other_uni in universities:
-        group = df[df["masters_university"] == other_uni]
-        coeffs = np.polyfit(group["predicted_salary"], group["first_job_salary"], 1)
-        x_line = np.linspace(group["predicted_salary"].min(), group["predicted_salary"].max(), 100)
-        y_line = coeffs[0] * x_line + coeffs[1]
-        opacity = 1 if other_uni == uni else 0.1
+        for other_uni in universities:
+            group = df[df["masters_university"] == other_uni]
+            coeffs = np.polyfit(group["predicted_salary"], group["first_job_salary"], 1)
+            x_line = np.linspace(group["predicted_salary"].min(), group["predicted_salary"].max(), 100)
+            y_line = coeffs[0] * x_line + coeffs[1]
+            opacity = 1 if other_uni == uni else 0.1
 
-        frame_uni.append(
-            go.Scatter(
-                x=group["predicted_salary"],
-                y=group["first_job_salary"],
-                mode="markers",
-                marker=dict(size=7, opacity=opacity, color=colors[other_uni]),
-                name=other_uni
+            frame_uni.append(
+                go.Scatter(
+                    x=group["predicted_salary"],
+                    y=group["first_job_salary"],
+                    mode="markers",
+                    marker=dict(size=7, opacity=opacity, color=colors[other_uni]),
+                    name=other_uni
+                )
             )
-        )
-        frame_uni.append(
-            go.Scatter(
-                x=x_line,
-                y=y_line,
-                mode="lines",
-                line=dict(color=colors[other_uni], width=2),
-                opacity=opacity,
-                showlegend=False
+            frame_uni.append(
+                go.Scatter(
+                    x=x_line,
+                    y=y_line,
+                    mode="lines",
+                    line=dict(color=colors[other_uni], width=2),
+                    opacity=opacity,
+                    showlegend=False
+                )
             )
-        )
-    frames.append(go.Frame(name=uni, data=frame_uni))
+        frames.append(go.Frame(name=uni, data=frame_uni))
 
  
     fig.frames = frames
 
     buttons = [
-    dict(
-        label="All Universities",
-        method="animate",
-        args=[
-            ["All"],
-            {"frame": {"duration": 500, "redraw": True},
-                "mode": "immediate",
-                "transition": {"duration": 400}}
-        ]
-    )
+        dict(
+            label="All Universities",
+            method="animate",
+            args=[
+                ["All"],
+                {"frame": {"duration": 500, "redraw": True},
+                    "mode": "immediate",
+                    "transition": {"duration": 400}}
+            ]
+        )
     ]
 
     for uni in universities:
@@ -174,5 +199,10 @@ def graphs_full(data_file):
             "yanchor": "top"
         }],
         legend_title_text="University"
+<<<<<<< HEAD
         )
+=======
+    )
+
+>>>>>>> 16f4f20b4bfeb830122364e93dcad08829375b40
     return fig

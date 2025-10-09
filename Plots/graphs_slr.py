@@ -127,21 +127,17 @@ def graph_slr(data_file):
         yaxis=dict(
             title=y_col.replace("_", " ").title(),
             gridcolor="rgba(0,0,0,0.08)", zeroline=False
-        ),
-        annotations=[dict(
-            xref="paper", yref="paper", x=0.95, y=1.12,
-            showarrow=False, font=dict(size=12, color="#444")
-        )],
+        )
     )
     fig.update_xaxes(title=predictors[0][1])
 
     buttons = []
-    n_groups = len(groups)
+    # n_groups = len(groups)
 
     for p_idx, (x_col, x_label) in enumerate(predictors):
         vis = []
         showleg = []
-        for idx_block, (start_idx, n_pts, n_lines, fixed_idx) in enumerate(blocks):
+        for idx_block, (start_idx, n_pts, n_lines) in enumerate(blocks):
             if idx_block == p_idx:
 
                 if x_col == "masters_gpa":
@@ -177,6 +173,8 @@ def graph_slr(data_file):
         updatemenus=[dict(
             type="buttons",
             direction="right",
+            width=1200,
+            height=700,
             x=0.5, xanchor="center",
             y=1.18, yanchor="top",
             showactive=True,
@@ -186,4 +184,4 @@ def graph_slr(data_file):
         )]
     )
 
-    return (fig)
+    return fig
