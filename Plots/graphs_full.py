@@ -40,17 +40,6 @@ def graphs_full(data_file):
         x_line = np.linspace(group["predicted_salary"].min(), group["predicted_salary"].max(), 100)
         y_line = coeffs[0] * x_line + coeffs[1]
 
-<<<<<<< HEAD
-    fig.add_trace(
-        go.Scatter(
-            x=group["predicted_salary"],
-            y=group["first_job_salary"],
-            mode="markers",
-            name=uni,
-            marker=dict(size=7, opacity=0.7, color=colors[uni]),
-            hovertext=[uni]*len(group),
-            hovertemplate="<b>%{hovertext}</b><br>Predicted: %{x:.0f}<br>Actual: %{y:.0f}<extra></extra>"
-=======
         # Scatter points
         fig.add_trace(
             go.Scatter(
@@ -62,20 +51,8 @@ def graphs_full(data_file):
                 hovertext=[uni]*len(group),
                 hovertemplate="<b>%{hovertext}</b><br>Predicted: %{x:.0f}<br>Actual: %{y:.0f}<extra></extra>"
             )
->>>>>>> 16f4f20b4bfeb830122364e93dcad08829375b40
         )
 
-<<<<<<< HEAD
-
-    fig.add_trace(
-        go.Scatter(
-            x=x_line,
-            y=y_line,
-            mode="lines",
-            name=f"{uni} Line",
-            line=dict(color=colors[uni], width=2),
-            showlegend=False
-=======
         # Regression line
         fig.add_trace(
             go.Scatter(
@@ -86,7 +63,6 @@ def graphs_full(data_file):
                 line=dict(color=colors[uni], width=2),
                 showlegend=False
             )
->>>>>>> 16f4f20b4bfeb830122364e93dcad08829375b40
         )
 
 
@@ -199,10 +175,6 @@ def graphs_full(data_file):
             "yanchor": "top"
         }],
         legend_title_text="University"
-<<<<<<< HEAD
-        )
-=======
     )
 
->>>>>>> 16f4f20b4bfeb830122364e93dcad08829375b40
     return fig
