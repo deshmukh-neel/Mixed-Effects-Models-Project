@@ -6,14 +6,14 @@ rng = np.random.default_rng(42)
 
 # --- config ---
 universities = ["UC Berkeley", "Stanford", "UCLA", "UC San Diego", "San Jose State"]
-n_per_uni = 100                           # exactly 100 per university
+n_per_uni = 100  # exactly 100 per university
 
 # Per-university GPA targets (more separated means)
 gpa_targets = {
     "UC Berkeley": 3.60,
-    "Stanford":    3.75,
-    "UCLA":        3.55,
-    "UC San Diego":3.40,
+    "Stanford": 3.75,
+    "UCLA": 3.55,
+    "UC San Diego": 3.40,
     "San Jose State": 3.35,
 }
 gpa_between_sd = 0.07   # jitter around each target (between-school)
@@ -22,9 +22,9 @@ gpa_within_sd  = 0.25   # individual variation (within-school)
 # Work experience targets (approximate, not perfect) + jitter
 work_exp_targets = {
     "UC Berkeley": 3.0,
-    "Stanford":    5.0,
-    "UCLA":        4.0,
-    "UC San Diego":2.0,
+    "Stanford": 5.0,
+    "UCLA": 4.0,
+    "UC San Diego": 2.0,
     "San Jose State": 6.0,
 }
 exp_between_sd = 0.4    # per-school mean jitter
@@ -50,14 +50,17 @@ for u in universities:
     yrs_py  = np.array([rng.integers(0, int(w) + 1) for w in work_exp])
     yrs_sql = np.array([rng.integers(0, int(w) + 1) for w in work_exp])
 
-    # Salary: signal + uni random intercept + noise, bounded [85k, 300k]
+    # ---- Salary: signal + uni random intercept + noise, bounded [85k, 300k]
     uni_eff = rng.normal(0, uni_intercept_sd)
-    signal = (110_000
-              + 35_000*(gpa - 3.0)
-              + 10_000*np.log1p(work_exp)
-              + 1_500*yrs_py
-              + 1_000*yrs_sql
-              + uni_eff)
+    signal = (
+        110_000
+        + 35_000 * (gpa - 3.0)
+        + 4_000  * work_exp           # strong positive linear effect
+        + 10_000 * np.log1p(work_exp) # gentle diminishing returns
+        + 1_500  * yrs_py
+        + 1_000  * yrs_sql
+        + uni_eff
+    )
     salary = np.clip(signal + rng.normal(0, salary_noise_sd, N), 85_000, 300_000).round().astype(int)
 
     rows.append(pd.DataFrame({
@@ -81,4 +84,5 @@ assert (df["first_job_salary"].between(85_000, 300_000)).all()
 # Save + quick peek at university means
 df.to_csv("masters_salary.csv", index=False)
 print("Saved: masters_salary.csv")
-print(df.groupby("masters_university")[["masters_gpa","relevant_work_years","years_python","years_sql","first_job_salary"]].mean().round(2))
+print(df.groupby("masters_university")[["masters_gpa","relevant_work_years","years_python","years_sql","first_job_salary"]]
+      .mean().round(2))
