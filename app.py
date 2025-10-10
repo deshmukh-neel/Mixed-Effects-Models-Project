@@ -204,9 +204,17 @@ def serve_layout():
                                         ''',
                                         style={
                                             "fontSize": "18px",  
-                                            "lineHeight": "1.6",  
+                                            "lineHeight":"1.6",  
                                         }
                                     ),
+                                ],
+                                className="section"
+                            ), 
+                            html.Div(
+                                [
+                                    dcc.Graph(figure=me_fig),
+                                    html.H2("Let's break it down."),
+                                    dcc.Graph(figure=me_pred_fig)
                                 ],
                                 className="section"
                             ),
@@ -229,9 +237,7 @@ def serve_layout():
         ],
     )
 
-
 app.layout = serve_layout
-
 server = app.server
 
 if __name__ == "__main__":

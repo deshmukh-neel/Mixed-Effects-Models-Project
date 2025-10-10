@@ -155,7 +155,7 @@ def graphs_full(data_file):
 
     # --- Layout ---
     fig.update_layout(
-        title="Mixed Effects Model: Predicted vs Actual Salary by University",
+        title="Multiple Linear Regression: Predicted vs Actual Salary by University",
         xaxis_title="Predicted Salary",
         yaxis_title="Actual Salary",
         template="plotly_white",

@@ -185,8 +185,8 @@ def build_predicted_vs_actual_figure(data: pd.DataFrame):
         xaxis_title='Predicted Salary',
         yaxis_title='Actual Salary',
         template='plotly_white',
-        width=800,
-        height=600,
+        width=1400,      
+        height=700,
         legend_title="Master's Program University"
     )
 
