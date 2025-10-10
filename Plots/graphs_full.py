@@ -44,7 +44,14 @@ def graphs_full(data_file):
                 name=uni,
                 marker=dict(size=7, opacity=0.7, color=colors[uni]),
                 hovertext=[uni]*len(group),
-                hovertemplate="<b>%{hovertext}</b><br>Predicted: %{x:.0f}<br>Actual: %{y:.0f}<extra></extra>"
+                customdata=group[["masters_gpa", "relevant_work_years", "years_python", "years_sql"]].values,
+                hovertemplate="<b>%{hovertext}</b><br>"
+                             "Predicted: %{x:.0f}<br>"
+                             "Actual: %{y:.0f}<br>"
+                             "Masters GPA: %{customdata[0]:.2f}<br>"
+                             "Work Years: %{customdata[1]:.0f}<br>"
+                             "Python Years: %{customdata[2]:.0f}<br>"
+                             "SQL Years: %{customdata[3]:.0f}<extra></extra>"
             )
         )
 
@@ -76,7 +83,16 @@ def graphs_full(data_file):
                 y=group["first_job_salary"],
                 mode="markers",
                 marker=dict(size=7, opacity=0.7, color=colors[uni]),
-                name=uni
+                name=uni,
+                hovertext=[uni]*len(group),
+                customdata=group[["masters_gpa", "relevant_work_years", "years_python", "years_sql"]].values,
+                hovertemplate="<b>%{hovertext}</b><br>"
+                             "Predicted: %{x:.0f}<br>"
+                             "Actual: %{y:.0f}<br>"
+                             "Masters GPA: %{customdata[0]:.2f}<br>"
+                             "Work Years: %{customdata[1]:.0f}<br>"
+                             "Python Years: %{customdata[2]:.0f}<br>"
+                             "SQL Years: %{customdata[3]:.0f}<extra></extra>"
             )
         )
         frame_all.append(
@@ -107,7 +123,16 @@ def graphs_full(data_file):
                     y=group["first_job_salary"],
                     mode="markers",
                     marker=dict(size=7, opacity=opacity, color=colors[other_uni]),
-                    name=other_uni
+                    name=other_uni,
+                    hovertext=[other_uni]*len(group),
+                    customdata=group[["masters_gpa", "relevant_work_years", "years_python", "years_sql"]].values,
+                    hovertemplate="<b>%{hovertext}</b><br>"
+                                 "Predicted: %{x:.0f}<br>"
+                                 "Actual: %{y:.0f}<br>"
+                                 "Masters GPA: %{customdata[0]:.2f}<br>"
+                                 "Work Years: %{customdata[1]:.0f}<br>"
+                                 "Python Years: %{customdata[2]:.0f}<br>"
+                                 "SQL Years: %{customdata[3]:.0f}<extra></extra>"
                 )
             )
             frame_uni.append(
