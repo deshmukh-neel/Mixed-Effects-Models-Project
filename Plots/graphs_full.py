@@ -28,7 +28,6 @@ def graphs_full(data_file):
         "UCLA": "#bf94e4"            
     }
 
-
     fig = go.Figure()
 
     for uni in universities:

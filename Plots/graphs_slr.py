@@ -53,7 +53,6 @@ def graph_slr(data_file):
         n_point_traces = 0
         n_group_line_traces = 0
 
-
         for g in groups:
             dfg = dfp[dfp[group_col] == g]
             color = colors.get(g, "#999999")
@@ -61,17 +60,15 @@ def graph_slr(data_file):
                 x=dfg[x_col],
                 y=dfg[y_col],
                 mode="markers",
-                name=g, 
+                name=g,
                 legendgroup=g,
                 hovertemplate=f"{g}<br>{x_label}: %{{x}}<br>{y_col.replace('_',' ').title()}: %{{y}}<extra></extra>",
-                marker=dict(size=7, opacity=0.6, color=color, line=dict(width=0)),
-                visible=True if x_col == "masters_gpa" else False,  
+                marker=dict(size=7, opacity=0.6, color=color),
+                visible=(p_idx == 0),
                 showlegend=(p_idx == 0),
-        ))
-        n_point_traces += 1
+            ))
+            n_point_traces += 1
 
-
-    
         for g in groups:
             dfg = dfp[dfp[group_col] == g]
             color = colors.get(g, "#999999")
@@ -80,35 +77,31 @@ def graph_slr(data_file):
             else:
                 gi = fe_intercept + (dfg[y_col].mean() - (fe_intercept + fe_slope * dfg[x_col].mean()))
                 gs = fe_slope
-    
+
             all_traces.append(go.Scatter(
                 x=x_line,
                 y=gi + gs * x_line,
                 mode="lines",
-                name=f"{g} line", 
+                name=f"{g} line",
                 legendgroup=g,
                 hoverinfo="skip",
                 line=dict(width=2, color=color),
-                visible=True if x_col == "masters_gpa" else "legendonly" if p_idx == 0 else False,
+                visible=(p_idx == 0),
                 showlegend=(p_idx == 0),
-        ))
-        n_group_line_traces += 1
+            ))
+            n_group_line_traces += 1
 
-    
         all_traces.append(go.Scatter(
             x=x_line,
             y=y_fe,
             mode="lines",
             name="Population average",
-            hovertemplate=f"Fixed: y = {fe_intercept:.2f} + {fe_slope:.2f}×{x_label}<extra></extra>",
             line=dict(width=4, dash="dash", color="black"),
-            visible=True if p_idx == 0 else False,
+            visible=(p_idx == 0),
             showlegend=(p_idx == 0),
         ))
 
         blocks.append((start_idx, n_point_traces, n_group_line_traces, len(all_traces) - 1))
-
-    fig = go.Figure(data=all_traces)
 
     fig = go.Figure(data=all_traces)
 

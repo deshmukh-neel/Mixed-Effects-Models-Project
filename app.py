@@ -100,7 +100,12 @@ def serve_layout():
                                     - Years of SQL: how long (in years) student has experience with SQL
                                     - University: UC Berkeley, Stanford, UCLA, UC San Diego, San Jose State
                                     - First Job Salary: our outcome variable!
-                                    ''')
+                                    ''',
+                                    style={
+                                        "fontSize": "18px",  
+                                        "lineHeight": "1.6",  
+                                    }
+                                    )
                                 ],
                                 className="section",
 
@@ -118,7 +123,11 @@ def serve_layout():
                                         We started simple - a Simple Linear Regression (SLR) model to see how each variable alone relates to salary. 
                                         Think of it as testing the waters before diving into deeper modeling. 
 
-                                        """
+                                        """,
+                                        style={
+                                        "fontSize": "18px",  
+                                        "lineHeight": "1.6",  
+                                    }
                                     ), 
                                     dcc.Graph(figure=slr_fig),
                                     dcc.Markdown(
@@ -128,7 +137,11 @@ def serve_layout():
 
                                         Model: Salary ~ GPA + Work Experience + Python Years + SQL Years + University
 
-                                            '''
+                                            ''',
+                                        style={
+                                            "fontSize": "18px",  
+                                            "lineHeight": "1.6",  
+                                        }
                                     ),
 
                                     html.H2("Model Results"),
@@ -158,11 +171,44 @@ def serve_layout():
                                 it treats the five schools in our dataset as the only ones that exist and assumes that their differences are perfectly estimated. 
                                 However, we are pretty aware of the fact that other universities exist with their own graduate programs.
                                 Even if this data was real, what if we wanted to generalize beyond these five universities? 
-                                        """
+                                        """,
+                                        style={
+                                        "fontSize": "18px",  
+                                        "lineHeight": "1.6",  
+                                    }
                                     ),
                                     dcc.Graph(figure=mlr_fig)
                                 ],
                                 className="section",
+                            ),
+
+                            html.Div(
+                                [
+                                    html.H2("Mixed Effect Models", id= "mixed_effect"),
+                                    dcc.Markdown(
+                                        '''
+
+                                        From our multiple linear regression model, we’ve seen that universities differ in their average salaries, but how can we represent that in the model? 
+                                        A regular multiple linear regression model assumes that the differences between universities are fixed and known. But, in this case, students from the same university share a lot of the same background which means that the differences vary and are unknown. 
+                                        Students from the same university might have the same professors, career outlooks through school fairs, or program reputations that affect their salaries.
+                                        If we ignore this and use standard multiple linear regression (MLR), we’re pretending those clusters do not exist (*Alexa play Bad by Michael Jackson*).
+                                        Mixed-effect models recognize that observations within the same group (in this case, university) are more alike than those from different groups. 
+                                        Treating every data point as independent can lead to misleadingly narrow confidence intervals and inflated significance. Essentially, our investigation will be incorrect.
+
+                                        ## What Mixed-Effect Models Do
+                                        Mixed-effects models allow us to model both the individual-level effects (like GPA, experience, and skills) and group-level effects 
+                                        (like the university someone attended). In our case, we know salaries tend to cluster by university; some schools might consistently 
+                                        have graduates who earn more, even after accounting for other factors like GPA. A mixed-effects model captures this by giving each university 
+                                        its own random intercept. This means that we are allowing each school to vary slightly around the average rather than assuming the university differences 
+                                        are fixed and exact. We are able to recognize that not all variation is equal! Hooray!
+                                        ''',
+                                        style={
+                                            "fontSize": "18px",  
+                                            "lineHeight": "1.6",  
+                                        }
+                                    ),
+                                ],
+                                className="section"
                             ),
                             html.Div(
                                 [
