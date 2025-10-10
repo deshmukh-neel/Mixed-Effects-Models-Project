@@ -159,7 +159,7 @@ def graph_slr(data_file):
             method="update",
             args=[
                 {"visible": vis, "showlegend": showleg},
-                {"xaxis": {"title": x_label}, "transition": {"duration": 500, "easing": "cubic-in-out"}},
+                {"xaxis": {"title": {"text": x_label}}, "transition": {"duration": 500, "easing": "cubic-in-out"}},
             ],
         ))
 
