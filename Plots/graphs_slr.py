@@ -65,10 +65,10 @@ def graph_slr(data_file):
                 legendgroup=f"{g}-{x_col}",
                 hovertemplate=f"{group_col}: {g}<br>{x_label}: %{{x}}<br>{y_col.replace('_',' ').title()}: %{{y}}<extra></extra>",
                 marker=dict(size=7, opacity=0.6, color=color, line=dict(width=0)),
-                visible=True if p_idx == 0 else False,
+                visible=True if x_col == "masters_gpa" else False,  
                 showlegend=(p_idx == 0),
-            ))
-            n_point_traces += 1
+        ))
+        n_point_traces += 1
 
     
         for g in groups:
@@ -87,10 +87,10 @@ def graph_slr(data_file):
                 legendgroup=f"{g}-{x_col}",
                 hovertemplate=f"{group_col}: {g}<br>Line: y = {gi:.2f} + {gs:.2f}×{x_label}<extra></extra>",
                 line=dict(width=2, color=color),
-                visible="legendonly" if p_idx == 0 else False,
+                visible=True if x_col == "masters_gpa" else "legendonly" if p_idx == 0 else False,
                 showlegend=(p_idx == 0),
-            ))
-            n_group_line_traces += 1
+        ))
+        n_group_line_traces += 1
 
     
         all_traces.append(go.Scatter(
@@ -108,10 +108,11 @@ def graph_slr(data_file):
 
     fig = go.Figure(data=all_traces)
 
+    fig = go.Figure(data=all_traces)
+
     fig.update_layout(
         title=dict(
-            text=("Mixed Effects Models Visualization<br>"
-                f"<sup>Response: {y_col.replace('_',' ').title()} • Groups: {group_col.replace('_',' ').title()}</sup>"),
+            text="An Example of Simple Linear Regression",
             x=.05
         ),
         template="plotly_white",
@@ -127,30 +128,29 @@ def graph_slr(data_file):
         yaxis=dict(
             title=y_col.replace("_", " ").title(),
             gridcolor="rgba(0,0,0,0.08)", zeroline=False
-        )
+        ),
     )
     fig.update_xaxes(title=predictors[0][1])
 
+    # --- Add Radio Buttons to Switch Predictors ---
     buttons = []
-    # n_groups = len(groups)
+    n_groups = len(groups)
 
     for p_idx, (x_col, x_label) in enumerate(predictors):
         vis = []
         showleg = []
-        for idx_block, (start_idx, n_pts, n_lines) in enumerate(blocks):
+        for idx_block, (start_idx, n_pts, n_lines, fixed_idx) in enumerate(blocks):
             if idx_block == p_idx:
-
+                # ✅ Only Master's GPA shows scatter + lines
                 if x_col == "masters_gpa":
-                    vis.extend([True] * n_pts)
+                    vis.extend([True] * n_pts)     # show scatter
                     showleg.extend([True] * n_pts)
                 else:
-                    vis.extend([False] * n_pts)
+                    vis.extend([False] * n_pts)    # hide scatter for others
                     showleg.extend([False] * n_pts)
-        
-                vis.extend(["legendonly"] * n_lines)
+                vis.extend([True] * n_lines)       # show regression lines
                 showleg.extend([True] * n_lines)
-        
-                vis.append(True)
+                vis.append(True)                   # fixed global line
                 showleg.append(True)
             else:
                 vis.extend([False] * n_pts)
@@ -173,9 +173,7 @@ def graph_slr(data_file):
         updatemenus=[dict(
             type="buttons",
             direction="right",
-            width=1200,
-            height=700,
-            x=0.5, xanchor="center",
+            x=0.8, xanchor="center",
             y=1.18, yanchor="top",
             showactive=True,
             buttons=buttons,
