@@ -61,14 +61,15 @@ def graph_slr(data_file):
                 x=dfg[x_col],
                 y=dfg[y_col],
                 mode="markers",
-                name=f"{g} • data",
-                legendgroup=f"{g}-{x_col}",
-                hovertemplate=f"{group_col}: {g}<br>{x_label}: %{{x}}<br>{y_col.replace('_',' ').title()}: %{{y}}<extra></extra>",
+                name=g, 
+                legendgroup=g,
+                hovertemplate=f"{g}<br>{x_label}: %{{x}}<br>{y_col.replace('_',' ').title()}: %{{y}}<extra></extra>",
                 marker=dict(size=7, opacity=0.6, color=color, line=dict(width=0)),
-                visible=True if p_idx == 0 else False,
+                visible=False,
                 showlegend=(p_idx == 0),
             ))
             n_point_traces += 1
+
 
     
         for g in groups:
@@ -79,16 +80,17 @@ def graph_slr(data_file):
             else:
                 gi = fe_intercept + (dfg[y_col].mean() - (fe_intercept + fe_slope * dfg[x_col].mean()))
                 gs = fe_slope
+    
             all_traces.append(go.Scatter(
                 x=x_line,
                 y=gi + gs * x_line,
                 mode="lines",
-                name=f"{g} • group line",
-                legendgroup=f"{g}-{x_col}",
-                hovertemplate=f"{group_col}: {g}<br>Line: y = {gi:.2f} + {gs:.2f}×{x_label}<extra></extra>",
+                name=f"{g} line", 
+                legendgroup=g,
+                hoverinfo="skip",
                 line=dict(width=2, color=color),
                 visible="legendonly" if p_idx == 0 else False,
-                showlegend=(p_idx == 0),
+                showlegend=False  
             ))
             n_group_line_traces += 1
 
@@ -97,7 +99,7 @@ def graph_slr(data_file):
             x=x_line,
             y=y_fe,
             mode="lines",
-            name="Fixed effect (global)",
+            name="Population average",
             hovertemplate=f"Fixed: y = {fe_intercept:.2f} + {fe_slope:.2f}×{x_label}<extra></extra>",
             line=dict(width=4, dash="dash", color="black"),
             visible=True if p_idx == 0 else False,
@@ -110,8 +112,8 @@ def graph_slr(data_file):
 
     fig.update_layout(
         title=dict(
-            text=("Mixed Effects Models Visualization<br>"
-                f"<sup>Response: {y_col.replace('_',' ').title()} • Groups: {group_col.replace('_',' ').title()}</sup>"),
+            text=("An Example of Simple Linear Regression<br>"
+                ),
             x=.05
         ),
         template="plotly_white",
@@ -132,12 +134,12 @@ def graph_slr(data_file):
     fig.update_xaxes(title=predictors[0][1])
 
     buttons = []
-    # n_groups = len(groups)
+    #n_groups = len(groups)
 
     for p_idx, (x_col, x_label) in enumerate(predictors):
         vis = []
         showleg = []
-        for idx_block, (start_idx, n_pts, n_lines) in enumerate(blocks):
+        for idx_block, (start_idx, n_pts, n_lines, fixed_idx) in enumerate(blocks):
             if idx_block == p_idx:
 
                 if x_col == "masters_gpa":
@@ -173,9 +175,7 @@ def graph_slr(data_file):
         updatemenus=[dict(
             type="buttons",
             direction="right",
-            width=1200,
-            height=700,
-            x=0.5, xanchor="center",
+            x=0.8, xanchor="center",
             y=1.18, yanchor="top",
             showactive=True,
             buttons=buttons,
@@ -183,5 +183,6 @@ def graph_slr(data_file):
             bordercolor="rgba(0,0,0,0)"
         )]
     )
+    fig.update_layout(width=1200, height=700)
 
     return fig

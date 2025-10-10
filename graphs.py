@@ -1,7 +1,6 @@
 import plotly.graph_objects as go
 import plotly.express as px
 import numpy as np
-import numpy as np
 import pandas as pd
 import scipy.stats as stats
 import statsmodels.api as sm
@@ -9,12 +8,6 @@ import statsmodels.formula.api as smf
 import warnings
 from statsmodels.tools.sm_exceptions import ConvergenceWarning
 warnings.filterwarnings("ignore", category=ConvergenceWarning)
-
-# plots.py
-import plotly.graph_objects as go
-import numpy as np
-import pandas as pd
-import statsmodels.formula.api as smf
 
 # --- Load data ---
 data = pd.read_csv("Data/masters_salary.csv")
@@ -49,6 +42,13 @@ model4 = smf.mixedlm(
 ).fit()
 
 def create_spaghetti_traces(model, x_var, data, group_name='masters_university'):
+    colors = {
+    "UC Berkeley": "#FDB515",
+    "Stanford": "#D62728",
+    "UC San Diego": "#00629B",
+    "San Jose State": "#7EE081",
+    "UCLA": "#BF94E4"
+            }
     x_vals = np.linspace(data[x_var].min(), data[x_var].max(), 100)
     traces = []
     fixed_intercept = model.fe_params['Intercept']
@@ -74,9 +74,9 @@ def create_spaghetti_traces(model, x_var, data, group_name='masters_university')
             y=y_group,
             mode='lines',
             name=str(group),
-            opacity=0.6
+            line=dict(color=colors.get(group, '#999999')), 
+            opacity=0.7
         ))
-
     return traces
 
 # --- Build the figure ---

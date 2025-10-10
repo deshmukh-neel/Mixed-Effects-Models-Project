@@ -16,13 +16,10 @@ def graphs_full(data_file):
     )
     result = model.fit()
 
-    # Add predicted values
     df["predicted_salary"] = result.fittedvalues
 
-    # Get list of universities
     universities = sorted(df["masters_university"].unique())
 
-    # Custom colors
     colors = {
         "UC Berkeley": "#FDB515",    
         "Stanford": "#d62728",       
@@ -40,7 +37,7 @@ def graphs_full(data_file):
         x_line = np.linspace(group["predicted_salary"].min(), group["predicted_salary"].max(), 100)
         y_line = coeffs[0] * x_line + coeffs[1]
 
-        # Scatter points
+    
         fig.add_trace(
             go.Scatter(
                 x=group["predicted_salary"],
@@ -53,7 +50,7 @@ def graphs_full(data_file):
             )
         )
 
-        # Regression line
+    
         fig.add_trace(
             go.Scatter(
                 x=x_line,
