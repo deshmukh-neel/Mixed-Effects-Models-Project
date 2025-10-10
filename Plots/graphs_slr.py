@@ -136,7 +136,6 @@ def graph_slr(data_file):
         showleg = []
         for idx_block, (start_idx, n_pts, n_lines, fixed_idx) in enumerate(blocks):
             if idx_block == p_idx:
-                # ✅ Only Master's GPA shows scatter + lines
                 if x_col == "masters_gpa":
                     vis.extend([True] * n_pts)     # show scatter
                     showleg.extend([True] * n_pts)

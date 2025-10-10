@@ -8,12 +8,11 @@ def graphs_full(data_file):
     # Load dataset
     df = pd.read_csv(data_file)  
 
-    # Fit a mixed-effects model
-    model = smf.mixedlm(
-        "first_job_salary ~ masters_gpa + relevant_work_years + years_python + years_sql",
-        df,
-        groups=df["masters_university"]
-    )
+    # Fit a MLR model
+    model = smf.ols(
+    "first_job_salary ~ masters_gpa + relevant_work_years + years_python + years_sql",
+    data=df
+        )
     result = model.fit()
 
     df["predicted_salary"] = result.fittedvalues

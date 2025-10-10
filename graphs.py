@@ -97,45 +97,76 @@ def build_mixed_effects_figure():
     n_work = len(traces_work)
     n_py = len(traces_py)
     n_sql = len(traces_sql)
-
     buttons = [
-        dict(label='GPA',
-             method='update',
-             args=[{'visible': [True]*n_gpa + [False]*(n_work+n_py+n_sql)},
-                   {'title': 'Mixed Effects: GPA vs First Job Salary',
-                    'xaxis': {'title': 'GPA'}}]),
-        dict(label='Work Experience',
-             method='update',
-             args=[{'visible': [False]*n_gpa + [True]*n_work + [False]*(n_py+n_sql)},
-                   {'title': 'Mixed Effects: Relevant Work Experience vs Salary',
-                    'xaxis': {'title': 'Years of Relevant Work Experience'}}]),
-        dict(label='Python Experience',
-             method='update',
-             args=[{'visible': [False]*(n_gpa+n_work) + [True]*n_py + [False]*n_sql},
-                   {'title': 'Mixed Effects: Python Experience vs Salary',
-                    'xaxis': {'title': 'Years of Python Experience'}}]),
-        dict(label='SQL Experience',
-             method='update',
-             args=[{'visible': [False]*(n_gpa+n_work+n_py) + [True]*n_sql},
-                   {'title': 'Mixed Effects: SQL Experience vs Salary',
-                    'xaxis': {'title': 'Years of SQL Experience'}}])
-    ]
+            dict(
+                label='GPA',
+                method='update',
+                args=[
+                    {'visible': [True]*n_gpa + [False]*(n_work+n_py+n_sql)},
+                    {
+                        'title': {'text': 'Mixed Effects: GPA vs First Job Salary'},
+                        'xaxis': {'title': {'text': "GPA"}},
+                        'yaxis': {'title': {'text': "First Job Salary"}},
+                        'legend': {'title': {'text': "Master's Program University"}}
+                    }
+                ]
+            ),
+            dict(
+                label='Work Experience',
+                method='update',
+                args=[
+                    {'visible': [False]*n_gpa + [True]*n_work + [False]*(n_py+n_sql)},
+                    {
+                        'title': {'text': 'Mixed Effects: Relevant Work Experience vs Salary'},
+                        'xaxis': {'title': {'text': "Years of Relevant Work Experience"}},
+                        'yaxis': {'title': {'text': "First Job Salary"}},
+                        'legend': {'title': {'text': "Master's Program University"}}
+                    }
+                ]
+            ),
+            dict(
+                label='Python Experience',
+                method='update',
+                args=[
+                    {'visible': [False]*(n_gpa+n_work) + [True]*n_py + [False]*n_sql},
+                    {
+                        'title': {'text': 'Mixed Effects: Python Experience vs Salary'},
+                        'xaxis': {'title': {'text': "Years of Python Experience"}},
+                        'yaxis': {'title': {'text': "First Job Salary"}},
+                        'legend': {'title': {'text': "Master's Program University"}}
+                    }
+                ]
+            ),
+            dict(
+                label='SQL Experience',
+                method='update',
+                args=[
+                    {'visible': [False]*(n_gpa+n_work+n_py) + [True]*n_sql},
+                    {
+                        'title': {'text': 'Mixed Effects: SQL Experience vs Salary'},
+                        'xaxis': {'title': {'text': "Years of SQL Experience"}},
+                        'yaxis': {'title': {'text': "First Job Salary"}},
+                        'legend': {'title': {'text': "Master's Program University"}}
+                    }
+                ]
+            ),
+        ]
 
     fig.update_layout(
         updatemenus=[dict(
             type='buttons',
             direction='right',
-            x=0.5,
-            y=1.0,
+            x=0.5, y=1.0,
             buttons=buttons,
             showactive=True
         )],
-        title='Mixed Effects: GPA vs First Job Salary',
-        xaxis_title='GPA',
-        yaxis_title='First Job Salary',
-        legend_title="Master's Program University",
+        title={'text': 'Mixed Effects: GPA vs First Job Salary'},
+        xaxis={'title': {'text': 'GPA'}},
+        yaxis={'title': {'text': 'First Job Salary'}},
+        legend={'title': {'text': "Master's Program University"}},
         template='plotly_white',
-        height=700
+        height=700,
+        width=1200
     )
 
     return fig
@@ -185,7 +216,7 @@ def build_predicted_vs_actual_figure(data: pd.DataFrame):
         xaxis_title='Predicted Salary',
         yaxis_title='Actual Salary',
         template='plotly_white',
-        width=1400,      
+        width=1200,      
         height=700,
         legend_title="Master's Program University"
     )

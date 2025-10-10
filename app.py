@@ -25,6 +25,7 @@ def serve_layout():
     return html.Div(
         id="page-container",
         children=[
+            dcc.Location(id='url'),
             # ---------- Header ----------
             dbc.Navbar(
                 [
@@ -45,9 +46,11 @@ def serve_layout():
                             html.Hr(),
                             dbc.Nav(
                                 [
-                                    dbc.NavLink("Introduction", href="#introduction"),
-                                    dbc.NavLink("Main Content", href="#main"),
-                                    dbc.NavLink("Conclusion", href="#conclusion"),
+                                    dbc.NavLink("Introduction", href="#introduction", external_link=True),
+                                    dbc.NavLink("Simple Linear Regression", href="#slr", external_link=True),
+                                    dbc.NavLink("Multiple Linear Regression", href="#mlr", external_link=True),
+                                    dbc.NavLink("Mixed Effect Models", href="#mixed_effect", external_link=True),
+                                    dbc.NavLink("Conclusion", href="#conclusion", external_link=True),
                                 ],
                                 vertical=True,
                                 pills=True,
@@ -112,7 +115,7 @@ def serve_layout():
                             ),
                             html.Div(
                                 [
-                                    html.H2("Let's Dive into Linear Regression\n", id="main"),
+                                    html.H2("Let's Dive into Linear Regression\n", id="slr"),
                                     dcc.Markdown(
                                         """
                                      
@@ -144,7 +147,7 @@ def serve_layout():
                                         }
                                     ),
 
-                                    html.H2("Model Results"),
+                                    html.H2("Multiple Linear Regression", id = "mlr"),
                                     html.Img(
                                         src="/assets/OLS_Summary.png", 
                                         style={
