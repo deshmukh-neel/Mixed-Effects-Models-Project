@@ -56,10 +56,8 @@ body {
   background-color: var(--bg-alt);
   padding: 1rem;
   border-right: 1px solid #ddd;
-  position: sticky;      
-  top: 80px;             
-  height: fit-content;   
-  align-self: flex-start; 
+  transition: transform 0.3s ease;
+  transform: translateX(0);
 }
 
 .sidebar.collapsed {
@@ -85,6 +83,7 @@ body {
 
 .content {
   flex: 1;
+  max-width: 1400px;
   padding: 2rem;
   background-color: var(--bg-main);
   color: var(--text-main);
@@ -96,10 +95,10 @@ body {
   padding: 1rem;
   background-color: var(--bg-alt);
   border-radius: 0.5rem;
-  scroll-margin-top: 90px; 
+  scroll-margin-top: 90px;  /* so anchored sections aren't hidden under header */
 }
 
-
+/* Responsive Sidebar */
 @media (max-width: 768px) {
   .layout-container { position: relative; }
   .sidebar {

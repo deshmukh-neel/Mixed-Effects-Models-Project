@@ -9,16 +9,37 @@ from Plots.graphs_full import *
 from Plots.graphs_slr import *
 
 
-data = pd.read_csv("Data/masters_salary.csv")
+salary_data = pd.read_csv("Data/masters_salary.csv")
 
 
 me_fig = build_mixed_effects_figure()
-me_pred_fig = build_predicted_vs_actual_figure(data)
+me_pred_fig = build_predicted_vs_actual_figure(salary_data)
 
 slr_fig = graph_slr("Data/masters_salary.csv")
 mlr_fig = graphs_full("Data/masters_salary.csv")
 
+code_snippet = """```
+                model1 = smf.mixedlm("first_job_salary ~ masters_gpa",
+                    data=salary_data,
+                    groups=salary_data["masters_university"],
+                    re_formula="~masters_gpa"
+                ).fit()```
+                """
 
+equation = r'''
+        $$
+        \text{Predicted Salary} = -32{,}810 \\
+        \; +\; 39{,}410.6 \times \text{GPA} \\
+        \; +\; 6{,}868 \times \text{Work Experience} \\
+        \; +\; 1{,}921 \times \text{Years Python} \\
+        \; +\; 627 \times \text{Years SQL} \\
+        \\
+        \; +\; 17{,}880 \times \text{Stanford} \\
+        \; +\; 25{,}850 \times \text{UC Berkeley} \\
+        \; +\; 50{,}370 \times \text{UCSD} \\
+        \; +\; 26{,}390 \times \text{UCLA}
+        $$
+        '''
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 def serve_layout():
@@ -26,23 +47,25 @@ def serve_layout():
         id="page-container",
         children=[
             dcc.Location(id='url'),
-            # ---------- Header ----------
             dbc.Navbar(
                 [
-                    html.Div("Mixed Effects Models", className="navbar-brand title"),
+                    html.Div("Mixed Effects Models", className="navbar-brand title", 
+                             style={
+                            "marginLeft": "30px"  # moves it to the right
+                }),
                 ],
                 className="header",
                 expand=True,
             ),
 
-            # ---------- Body container ----------
             html.Div(
                 className="layout-container",
                 children=[
-                    # Sidebar
                     html.Div(
                         [
-                            html.H2("Contents", className="sidebar-title"),
+                            html.H2("Contents", className="sidebar-title",style={
+                            "marginLeft": "18px"
+                            }),
                             html.Hr(),
                             dbc.Nav(
                                 [
@@ -87,7 +110,7 @@ def serve_layout():
                                         """,
                                         style={
                                         "fontSize": "18px",  
-                                        "lineHeight": "1.6",  
+                                        "lineHeight": "1.6"
                                     }
                                     ),
                                     html.H2("Data", id="data"),
@@ -123,8 +146,14 @@ def serve_layout():
 
                                         Like Doja Cat once said, let's “get into it yuh.” 
 
-                                        We started simple - a Simple Linear Regression (SLR) model to see how each variable alone relates to salary. 
-                                        Think of it as testing the waters before diving into deeper modeling. 
+                                        We started simple: a Simple Linear Regression (SLR) model to see how each variable relates to salary on its own. By starting with SLR, we can see which variables show strong linear relationships with salary on their own before forming more complex models. 
+
+                                        The SLR models:
+                                        - Salary ~ GPA
+                                        - Salary ~ Work Experience (years)
+                                        - Salary ~ Internship Experience (years)
+                                        - Salary ~ Python Experience (years)
+                                        - Salary ~ SQL Experience (years)
 
                                         """,
                                         style={
@@ -133,6 +162,19 @@ def serve_layout():
                                     }
                                     ), 
                                     dcc.Graph(figure=slr_fig),
+                                    dcc.Markdown(
+                                        '''
+                                        In the interactive graph above you can change the graph to reflect how each variable affects the predicted salary in an SLR model.
+                                        Toggle the graph with the buttons in the upper right hand corner of the figure to view the effects of each variable: GPA, Work Experience, Python Experience, and SQL Experience.
+                                        Each color for the plot points and regression lines are representative for their respective schools. Although there are some variables that don’t have too much of an effect depending on the school,
+                                        we can see that each predictor generally has a positive influence on the respective regression lines. This data kind of suggests what we already as a collective know, right?
+                                        More knowledge and experience leads to more money. 
+                                        ''',
+                                        style={
+                                            "fontSize": "18px",  
+                                            "lineHeight": "1.6",  
+                                        }
+                                    ),
                                     dcc.Markdown(
                                         '''
                                         ### How about multiple predictors?
@@ -160,27 +202,53 @@ def serve_layout():
                                     ),
                                     dcc.Markdown(
                                         """
-                                Looking at the summary, our model explains about 57% of the variation in salary – not bad for simulated data.
-                                Almost all predictors appear to be statistically significant here, and all have positive relationships with salary. 
-                                In plain terms, higher GPA, more experience, more years of programming experience, all tend to correspond to higher pay.
-                                  SQL experience though… It seems like SQL didn’t make the cut. If only this dataset were real huh…
+                                    Looking at the summary, our model explains about 57% (R^2 = 0.579) of the variation in salary – not bad for simulated data. Almost all predictors seem to be statistically significant here, and all have positive relationships with salary. In more simple terms, higher GPA, more experience,
+                                    more years of programming experience, all tend to correspond to higher pay. SQL experience though… It seems like SQL didn’t make the cut. If only this dataset were real huh…
+                                    What do all these numbers mean though? If you look at the “coef” column, these numbers tell us the coefficients for each predictor in the full model. 
+                                    Among the predictors, GPA stands out with a strong positive coefficient (around 39,000) meaning that each one point increase in GPA is associated with roughly a $39,000 higher starting salary, while holding all other predictors constant. Relevant work experience also shows to have a strong impact on predicted salary, adding about $6,800 per year of experience.
+                                    Python experience has a smaller but still significant positive effect (around 1,9000 per year of experience) suggesting that technical skills pay off (modestly). As we mentioned earlier, SQL experience has a small coefficient ($600) 
+                                    and a p-value of 0.185, suggesting that in this model it is not a statistically significant predictor of salary. Sorry to all the SQL developers not getting love…
+                                    The university effects are also quite interesting. Compared to San Jose State (our baseline), all other universities show higher predicted salaries, especially San Diego.
+                                    These differences capture what we call “fixed effects.”
+                                    To help you visualize the model with the coefficients, below is the predicted salary equation (scroll L/R to see the whole thing):
 
-                                The university effects are also quite interesting. Compared to San Jose State (our baseline), all other universities show higher predicted salaries, especially San Diego.
-                                These differences capture what we call “fixed effects.”
-
-                                Predicted Salary = -32,810 + 39,410.6*(GPA) + 6,868*(Work Experience) + 1,921*(Years Python) + 627*(Years SQL)  + 17,880*(Stanford) + 25,850*(UC Berkeley) + 50,370*(UCSD) + 26,390*(UCLA)
-
-                                So far, our model assumes each university’s effect on salary is fixed and exact. In other words, 
-                                it treats the five schools in our dataset as the only ones that exist and assumes that their differences are perfectly estimated. 
-                                However, we are pretty aware of the fact that other universities exist with their own graduate programs.
-                                Even if this data was real, what if we wanted to generalize beyond these five universities? 
+                                """,style={
+                                        "fontSize": "18px",  
+                                        "lineHeight": "1.6",  
+                                    }
+                                    ),
+                                    dcc.Markdown(equation, mathjax=True,style={
+                                        "fontSize": "18px",
+                                        "overflowX": "auto",
+                                        "maxWidth": "100%",
+                                        "whiteSpace": "nowrap"
+                                        }),
+                                    dcc.Graph(figure=mlr_fig),
+                                    dcc.Markdown(
+                                        """
+                                        The figure above displays an MLR model for each university. Use the dropdown menu to see each school’s MLR line and data separately from one another.
+                                        Makes it a little nicer to view, yeah?  
+                                        With this, you’re able to see how the variables work together to build a regression line that can help predict the salary of a graduate from that particular university.
+                                        At a glance, you’re able to look at a student’s actual salary and where they fall on the graph in comparison to the prediction line. 
+                                        Each line shows a positive relationship with the predictors, though it seems that San Jose State seems to have a flatter trend compared to the other schools. 
+                                        """,
+                                        style ={
+                                            "fontSize": "18px",  
+                                            "lineHeight": "1.6",
+                                        }
+                                    ),
+                                    dcc.Markdown(
+                                        """
+                                    So far, our model assumes each university’s effect on salary is fixed and exact. In other words, 
+                                    it treats the five schools in our dataset as the only ones that exist and assumes that their differences are perfectly estimated. 
+                                    How could we recognize that each university might have its own natural variation that we do not want to overfit?
+                                    This is exactly where mixed-effects models come in! 
                                         """,
                                         style={
                                         "fontSize": "18px",  
                                         "lineHeight": "1.6",  
                                     }
-                                    ),
-                                    dcc.Graph(figure=mlr_fig)
+                                    )
                                 ],
                                 className="section",
                             ),
@@ -191,17 +259,27 @@ def serve_layout():
                                     dcc.Markdown(
                                         '''
 
-                                        From our multiple linear regression model, we’ve seen that universities differ in their average salaries, but how can we represent that in the model? 
-                                        A regular multiple linear regression model assumes that the differences between universities are fixed and known. But, in this case, students from the same university share a lot of the same background which means that the differences vary and are unknown. 
-                                        Students from the same university might have the same professors, career outlooks through school fairs, or program reputations that affect their salaries.
-                                        If we ignore this and use standard multiple linear regression (MLR), we’re pretending those clusters do not exist (*Alexa play Bad by Michael Jackson*).
-                                        Mixed-effect models recognize that observations within the same group (in this case, university) are more alike than those from different groups. 
+                                        From our multiple linear regression model (MLR), we’ve seen that student's average salaries differ by university, but how can we be sure we modeled it well?
+                                        A standard MLR model assumes that the categorical variable, the master's program a student attended, is a fixed quantity.  However, as categories
+                                        start to have 5 or so levels, it becomes difficult to defend the decision to model it as a fixed variable.  That's where randomness comes in. It's not *mathematical* randomness,
+                                        but since we have a group effect we'd like to model (master's programs), we consider the master's program to be a *random* effect.  Intuitively, think about the differences 
+                                        between data science programs from 5 different schools. Each school has a different set of professors, classes, specialization topics and reputation.  Some programs can be done remotely, 
+                                        and others are in person. For the next step of our analysis, we'd like to model how different master's programs can affect each of our other predictors' impact on salary.
+                                        If we ignore the group effect and use standard MLR, we’re pretending those clusters do not exist (*Alexa play Bad by Michael Jackson*).
+                                        Mixed-effect models recognize that observations within the same group are more alike than those from different groups. 
                                         Treating every data point as independent can lead to misleadingly narrow confidence intervals and inflated significance. Essentially, our investigation will be incorrect.
 
                                         ## What Mixed-Effect Models Do
-                                        Mixed-effects models allow us to model both the individual-level effects (like GPA, experience, and skills) and group-level effects 
-                                        (like the university someone attended). In our case, we know salaries tend to cluster by university; some schools might consistently 
-                                        have graduates who earn more, even after accounting for other factors like GPA. A mixed-effects model captures this by giving each university 
+                                        Mixed-effects models allow us to model both the individual-level effects (like GPA, experience, and skills) and group-level effects.
+                                        In our case, we know salaries tend to cluster by university; some schools might consistently 
+                                        have graduates who earn more, even after accounting for other factors like GPA. Before we move on, there are a few terms we should go over.
+                                        Mixed effects models have a few different names. They are also known as hierarchical or multilevel models. 
+                                        The name we used to describe our model depends on the structure of our data and how we collect it.  For example, longitudinal studies can also
+                                        be modeled with mixed effects. (Think assessing a student's test scores over multiple semesters.) 
+                                        Since we want to model the random effects of our 5 universities, we're clustering the students by a university's master's program,
+                                        as alluded to previously.  For the purposes of our blog, we'll focus on the two most common concepts associated with mixed effects models:
+                                        random slopes and random intercepts. A random intercepts model is the most common and simple example of a mixed effects model.
+                                        A mixed-effects model captures this by giving each university 
                                         its own random intercept. This means that we are allowing each school to vary slightly around the average rather than assuming the university differences 
                                         are fixed and exact. We are able to recognize that not all variation is equal! Hooray!
                                         ''',
@@ -217,7 +295,8 @@ def serve_layout():
                                 [
                                     dcc.Graph(figure=me_fig),
                                     html.H2("Let's break it down."),
-                                    dcc.Graph(figure=me_pred_fig)
+                                    dcc.Graph(figure=me_pred_fig),
+                                    dcc.Markdown(code_snippet, style={"backgroundColor": "#f8f9fa", "padding": "1rem", "borderRadius": "6px"})
                                 ],
                                 className="section"
                             ),

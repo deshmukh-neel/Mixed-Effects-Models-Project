@@ -9,35 +9,33 @@ import warnings
 from statsmodels.tools.sm_exceptions import ConvergenceWarning
 warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
-# --- Load data ---
-data = pd.read_csv("Data/masters_salary.csv")
+salary_data = pd.read_csv("Data/masters_salary.csv")
 
-# --- Fit mixed effects models ---
 model1 = smf.mixedlm(
     "first_job_salary ~ masters_gpa",
-    data=data,
-    groups=data["masters_university"],
+    data=salary_data,
+    groups=salary_data["masters_university"],
     re_formula="~masters_gpa"
 ).fit()
 
 model2 = smf.mixedlm(
     "first_job_salary ~ relevant_work_years",
-    data=data,
-    groups=data["masters_university"],
+    data=salary_data,
+    groups=salary_data["masters_university"],
     re_formula="~relevant_work_years"
 ).fit()
 
 model3 = smf.mixedlm(
     "first_job_salary ~ years_python",
-    data=data,
-    groups=data["masters_university"],
+    data=salary_data,
+    groups=salary_data["masters_university"],
     re_formula="~years_python"
 ).fit()
 
 model4 = smf.mixedlm(
     "first_job_salary ~ years_sql",
-    data=data,
-    groups=data["masters_university"],
+    data=salary_data,
+    groups=salary_data["masters_university"],
     re_formula="~years_sql"
 ).fit()
 
@@ -63,7 +61,7 @@ def create_spaghetti_traces(model, x_var, data, group_name='masters_university')
         name='Population Average'
     ))
 
-    # Random effects (group-specific lines)
+
     for group, effects in model.random_effects.items():
         group_intercept = fixed_intercept + effects['Group']
         group_slope = fixed_slope + effects[x_var]
@@ -79,16 +77,14 @@ def create_spaghetti_traces(model, x_var, data, group_name='masters_university')
         ))
     return traces
 
-# --- Build the figure ---
 def build_mixed_effects_figure():
-    traces_gpa   = create_spaghetti_traces(model1, 'masters_gpa', data)
-    traces_work  = create_spaghetti_traces(model2, 'relevant_work_years', data)
-    traces_py    = create_spaghetti_traces(model3, 'years_python', data)
-    traces_sql   = create_spaghetti_traces(model4, 'years_sql', data)
+    traces_gpa   = create_spaghetti_traces(model1, 'masters_gpa', salary_data)
+    traces_work  = create_spaghetti_traces(model2, 'relevant_work_years', salary_data)
+    traces_py    = create_spaghetti_traces(model3, 'years_python', salary_data)
+    traces_sql   = create_spaghetti_traces(model4, 'years_sql', salary_data)
 
     fig = go.Figure()
 
-    # Add traces with GPA visible initially
     for i, trace in enumerate(traces_gpa + traces_work + traces_py + traces_sql):
         trace.visible = (i < len(traces_gpa))
         fig.add_trace(trace)
@@ -172,8 +168,17 @@ def build_mixed_effects_figure():
     return fig
 
 def build_predicted_vs_actual_figure(data: pd.DataFrame):
-    universities = data['masters_university'].unique()
-    color_map = {uni: color for uni, color in zip(universities, px.colors.qualitative.Plotly)}
+
+    colors = {
+        "UC Berkeley": "#FDB515",
+        "Stanford": "#d62728",
+        "UC San Diego": "#00629B",
+        "San Jose State": "#7ee081",
+        "UCLA": "#bf94e4"
+    }
+
+    universities = sorted(data['masters_university'].unique())
+
     model_full = smf.mixedlm(
         "first_job_salary ~ masters_gpa + relevant_work_years + years_python + years_sql",
         data=data,
@@ -204,21 +209,79 @@ def build_predicted_vs_actual_figure(data: pd.DataFrame):
             y=subset['first_job_salary'],
             mode='markers',
             name=uni,
-            marker=dict(
-                size=7,
-                opacity=0.7,
-                color=color_map[uni]
-            )
+            marker=dict(size=7, opacity=0.8, color=colors[uni]),
+            hovertemplate=f"<b>{uni}</b><br>Predicted: %{{x:.0f}}<br>Actual: %{{y:.0f}}<extra></extra>"
         ))
 
+    frames = []
+
+    all_frame_data = []
+    for i, trace in enumerate(fig.data):
+        trace_copy = trace.to_plotly_json()
+        if i == 0:
+            trace_copy['opacity'] = 1
+        else:
+            trace_copy['opacity'] = 0.8
+        all_frame_data.append(trace_copy)
+    frames.append(go.Frame(name="All", data=all_frame_data))
+    for uni in universities:
+        frame_data = []
+        for i, trace in enumerate(fig.data):
+            trace_copy = trace.to_plotly_json()
+            if i == 0:
+                trace_copy['opacity'] = 1 
+            elif trace['name'] == uni:
+                trace_copy['opacity'] = 1
+            else:
+                trace_copy['opacity'] = 0.1
+            frame_data.append(trace_copy)
+        frames.append(go.Frame(name=uni, data=frame_data))
+
+    fig.frames = frames
+    buttons = [
+        dict(
+            label="All Universities",
+            method="animate",
+            args=[
+                ["All"],
+                {"frame": {"duration": 500, "redraw": True},
+                 "mode": "immediate",
+                 "transition": {"duration": 400}}
+            ]
+        )
+    ]
+
+    for uni in universities:
+        buttons.append(
+            dict(
+                label=uni,
+                method="animate",
+                args=[
+                    [uni],
+                    {"frame": {"duration": 500, "redraw": True},
+                     "mode": "immediate",
+                     "transition": {"duration": 400}}
+                ]
+            )
+        )
+
     fig.update_layout(
-        title=f'Predicted vs Actual: Full Mixed Effects Model',
-        xaxis_title='Predicted Salary',
-        yaxis_title='Actual Salary',
-        template='plotly_white',
-        width=1200,      
+        title="Mixed Effect Model: Predicted vs Actual Salary by University",
+        xaxis_title="Predicted Salary",
+        yaxis_title="Actual Salary",
+        template="plotly_white",
+        width=1200,
         height=700,
-        legend_title="Master's Program University"
+        updatemenus=[{
+            "buttons": buttons,
+            "direction": "down",
+            "showactive": True,
+            "x": 1.18,
+            "xanchor": "left",
+            "y": 1.05,
+            "yanchor": "top"
+        }],
+        legend_title_text="University"
     )
 
     return fig
