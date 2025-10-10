@@ -40,6 +40,55 @@ equation = r'''
         \; +\; 26{,}390 \times \text{UCLA}
         $$
         '''
+random_equation = r"""
+            We allow the intercept and four slopes to vary by university:
+
+            $$
+            y_{ij} 
+            = \beta_{0} 
+            + \beta_{1} x_{1ij} 
+            + \beta_{2} x_{2ij} 
+            + \beta_{3} x_{3ij} 
+            + \beta_{4} x_{4ij} 
+            + u_{0j} 
+            + u_{1j} x_{1ij} 
+            + u_{2j} x_{2ij} 
+            + u_{3j} x_{3ij} 
+            + u_{4j} x_{4ij} 
+            + \varepsilon_{ij}
+            $$
+
+            where:
+            - \( i \) indexes students
+            - \( j \) indexes universities
+            - $x_{1ij}$ = GPA  
+            - $x_{2ij}$ = Work Experience  
+            - $x_{3ij}$ = Python Years  
+            - $x_{4ij}$ = SQL Years
+
+            Random effects:
+            $$
+            \begin{bmatrix}
+            u_{0j} \\ u_{1j} \\ u_{2j} \\ u_{3j} \\ u_{4j}
+            \end{bmatrix}
+            \sim \mathcal{N} \left(
+            \begin{bmatrix} 0 \\ 0 \\ 0 \\ 0 \\ 0 \end{bmatrix},
+            \begin{bmatrix}
+            \tau_{00} & \tau_{01} & \tau_{02} & \tau_{03} & \tau_{04} \\
+            \tau_{01} & \tau_{11} & \tau_{12} & \tau_{13} & \tau_{14} \\
+            \tau_{02} & \tau_{12} & \tau_{22} & \tau_{23} & \tau_{24} \\
+            \tau_{03} & \tau_{13} & \tau_{23} & \tau_{33} & \tau_{34} \\
+            \tau_{04} & \tau_{14} & \tau_{24} & \tau_{34} & \tau_{44}
+            \end{bmatrix}
+            \right)
+            $$
+
+            and
+            $$
+            \varepsilon_{ij} \sim \mathcal{N}(0, \sigma^2)
+            $$
+            """
+
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 def serve_layout():
@@ -74,6 +123,8 @@ def serve_layout():
                                     dbc.NavLink("Multiple Linear Regression", href="#mlr", external_link=True),
                                     dbc.NavLink("Mixed Effect Models", href="#mixed_effect", external_link=True),
                                     dbc.NavLink("Conclusion", href="#conclusion", external_link=True),
+                                    dbc.NavLink("References", href="#references", external_link=True),
+
                                 ],
                                 vertical=True,
                                 pills=True,
@@ -259,44 +310,100 @@ def serve_layout():
                                     dcc.Markdown(
                                         '''
 
-                                        From our multiple linear regression model (MLR), we’ve seen that student's average salaries differ by university, but how can we be sure we modeled it well?
-                                        A standard MLR model assumes that the categorical variable, the master's program a student attended, is a fixed quantity.  However, as categories
-                                        start to have 5 or so levels, it becomes difficult to defend the decision to model it as a fixed variable.  That's where randomness comes in. It's not *mathematical* randomness,
-                                        but since we have a group effect we'd like to model (master's programs), we consider the master's program to be a *random* effect.  Intuitively, think about the differences 
-                                        between data science programs from 5 different schools. Each school has a different set of professors, classes, specialization topics and reputation.  Some programs can be done remotely, 
-                                        and others are in person. For the next step of our analysis, we'd like to model how different master's programs can affect each of our other predictors' impact on salary.
+                                        From our multiple linear regression model (MLR), we’ve observed that students's average salaries differ by university, but how can we be sure we modeled it well?
+                                        A standard MLR model assumes that the categorical variable, the master's program a student attended, is a fixed quantity. 
+                                        However, as categories start to have 5 or so levels, it becomes difficult to defend the decision to model it as a fixed variable. 
+                                        That's where randomness comes in. It's not *mathematical* randomness. But since we have a group effect we'd like to model (master's programs),
+                                        we consider the master's program to be a *random* effect. Intuitively, think about the differences between data science programs from 5 different schools. 
+                                        Each school has a different set of professors, classes, specialization topics, and reputation. Some programs can be done remotely, and others are in person. 
+                                        For the next step of our analysis, we'd like to model how different master's programs can affect each of our other predictors' impact on salary.
                                         If we ignore the group effect and use standard MLR, we’re pretending those clusters do not exist (*Alexa play Bad by Michael Jackson*).
                                         Mixed-effect models recognize that observations within the same group are more alike than those from different groups. 
-                                        Treating every data point as independent can lead to misleadingly narrow confidence intervals and inflated significance. Essentially, our investigation will be incorrect.
+                                        Treating every data point as independent can lead to misleadingly narrow confidence intervals and inflated significance.
+                                        Essentially, our investigation will be incorrect.
 
                                         ## What Mixed-Effect Models Do
                                         Mixed-effects models allow us to model both the individual-level effects (like GPA, experience, and skills) and group-level effects.
                                         In our case, we know salaries tend to cluster by university; some schools might consistently 
                                         have graduates who earn more, even after accounting for other factors like GPA. Before we move on, there are a few terms we should go over.
                                         Mixed effects models have a few different names. They are also known as hierarchical or multilevel models. 
-                                        The name we used to describe our model depends on the structure of our data and how we collect it.  For example, longitudinal studies can also
+                                        The name we use to describe our model depends on the structure of our data and how we collect it. For example, longitudinal studies can also
                                         be modeled with mixed effects. (Think assessing a student's test scores over multiple semesters.) 
                                         Since we want to model the random effects of our 5 universities, we're clustering the students by a university's master's program,
-                                        as alluded to previously.  For the purposes of our blog, we'll focus on the two most common concepts associated with mixed effects models:
-                                        random slopes and random intercepts. A random intercepts model is the most common and simple example of a mixed effects model.
-                                        A mixed-effects model captures this by giving each university 
-                                        its own random intercept. This means that we are allowing each school to vary slightly around the average rather than assuming the university differences 
-                                        are fixed and exact. We are able to recognize that not all variation is equal! Hooray!
+                                        as alluded to previously. For the purposes of our blog, we'll focus on the two most common concepts associated with mixed effects models:
+                                        Random slopes and random intercepts. A random intercepts model is the most common and simple example of a mixed effects model.
+                                        It allows the intercept to vary for each of our master's programs but keeps the slopes constant. For our analysis, this means that 
+                                        we expect students from all universities to have the same relationships between the predictors (GPA, work experience, etc.) and their first salary.
+                                        This isn't super helpful to us; all it tells us is that students from UC San Diego start out with higher salaries 
+                                        than students from UC Berkeley before considering any of the other predictors.
+                                        Boring! It's just a bunch of parallel lines on a plot. We want to know how different master's programs affect each predictor and its impact on salary.
+                                        For that, we'll need a random slopes (+intercept) model. Consider the following equation:
                                         ''',
                                         style={
                                             "fontSize": "18px",  
                                             "lineHeight":"1.6",  
                                         }
                                     ),
+                                    dcc.Markdown(random_equation, mathjax=True,style={
+                                        "fontSize": "18px",
+                                        "overflowX": "auto",
+                                        "maxWidth": "100%",
+                                        "whiteSpace": "nowrap"
+                                        }),
+                                    html.H2("Let's break it down."),
+                                    dcc.Markdown(
+                                        """
+                                        It may look intimidating, but don’t worry!
+                                        This is very similar to our well-known MLR equation with one difference:
+                                        the u terms represent the variance of the slopes for each of our predictors. 
+                                        Their expected value is 0 (on average we see no deviation), 
+                                        and the big scary tau-containing matrix contains the variance of our intercept $\\tau_{00}$ 
+                                        and the variances of our slopes on the diagonal (sound familiar?). 
+                                        The rest of the values are the covariances between the intercept and slopes or between two different slopes.
+                                        Finally, the classic MLR error assumption holds true for our random slope+intercept model. Let's take a look at the figure
+                                        below to see what's going on.
+                                        """, mathjax=True,
+                                        style={
+                                            "fontSize": "18px",  
+                                            "lineHeight":"1.6",  
+                                        }
+                                    )
                                 ],
                                 className="section"
                             ), 
                             html.Div(
                                 [
                                     dcc.Graph(figure=me_fig),
-                                    html.H2("Let's break it down."),
+                                    dcc.Markdown(
+                                        """
+                                        Cycle through the tabs to observe the lines for our random slopes model. What do you notice? 
+                                        It can be a little tricky to understand the difference between this plot and the earlier SLR plots.
+                                        The key here is that this graph gives us a much better understanding of how our master's program variable affects each of our predictors.
+                                        We notice their different intercepts, indicating that we know there are different salary baselines depending on which master’s program a student attended.
+                                        The fixed black line is the overall population trend between salary and its corresponding predictor variable. 
+                                        Each master’s program has its own slope for each predictor, so the relationship between the two can differ among the universities. 
+                                        For example, UC San Diego has the steepest slope for the SQL predictor,
+                                        so students from that program can expect to see a larger salary increase for every additional 
+                                        year of experience compared to the population average. Take a look at all the slopes for every predictor. 
+                                        Which other lines stand out? (This is simulated data, so no insult intended, 
+                                        but San Jose State does seem to lag a bit for salaries!).  Finally, 
+                                        how does our random slope+intercept model perform for predicting salaries for each university 
+                                        when all predictors are considered, MLR-style? Check out the next plot!
+                                        """, style={
+                                            "fontSize": "18px",  
+                                            "lineHeight":"1.6",  
+                                        }
+                                        ),
                                     dcc.Graph(figure=me_pred_fig),
-                                    dcc.Markdown(code_snippet, style={"backgroundColor": "#f8f9fa", "padding": "1rem", "borderRadius": "6px"})
+                                    dcc.Markdown(
+                                        """
+                                        Click on the university data you want to see from the drop down menu. How does our fitted line look?
+                                        For which programs did our model underestimate the salary data? Overestimate? Of course, this isn't perfect due to
+                                        our simulated dataset but it's still fun to look at! 
+                                        """, style={
+                                            "fontSize": "18px",  
+                                            "lineHeight":"1.6",  
+                                        })
                                 ],
                                 className="section"
                             ),
@@ -305,12 +412,37 @@ def serve_layout():
                                     html.H2("Conclusion", id= "conclusion"),
                                     dcc.Markdown(
                                         """
-                                        Summarize your findings, thoughts, or next steps.
-                                        """
+                                        Using simulated data for random effects is tricky,
+                                        we cannot provide a OLS-Summary analysis like we did for the MLR section because the numbers looked a little weird, sorry! 
+                                        We hope our plots helped you visualize how random slopes and intercepts can help you create better models with clustered data sets!
+                                        To see some awesome visuals, more examples and dive deeper into the math behind these models, check out our reference section!
+                                        """,
+                                        style={
+                                            "fontSize": "18px",  
+                                            "lineHeight":"1.6",  
+                                        }
                                     ),
                                 ],
                                 className="section",
                             ),
+                            html.Div(
+                                [
+                                    html.H2("References", id= "references"),
+                                    dcc.Markdown(
+                                        """
+                                        - https://ourcodingclub.github.io/tutorials/mixed-models/#ranslopes
+                                        - https://m-clark.github.io/mixed-models-with-R/random_intercepts.html
+                                        - https://mfviz.com/hierarchical-models/
+
+                                        """,
+                                        style={
+                                            "fontSize": "18px",  
+                                            "lineHeight":"1.6",  
+                                        }
+                                    ),
+                                ],
+                                className="section",
+                            )
                         ],
                         className="content",
                     ),
