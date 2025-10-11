@@ -23,6 +23,7 @@ body {
   height: 60px;
   display: flex;
   align-items: center;
+  background-color: var(--primary);
 }
 
 .navbar-brand.title {
