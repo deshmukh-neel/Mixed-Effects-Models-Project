@@ -100,7 +100,7 @@ def serve_layout():
                 [
                     html.Div("Mixed Effects Models", className="navbar-brand title", 
                              style={
-                            "marginLeft": "30px"  # moves it to the right
+                            "marginLeft": "30px" 
                 }),
                 ],
                 className="header",
@@ -134,7 +134,6 @@ def serve_layout():
                         className="sidebar",
                     ),
 
-                    # Main Content
                     html.Div(
                         [
                             html.H1(
@@ -417,7 +416,7 @@ def serve_layout():
                                         If we wanted to take this even further, some other fun things to look at could be:
                                         - Try the model with real data and similar variables.
                                         - Take advantage of feature engineering to model interactions like Python x work experience.
-                                        
+
                                         Mixed models help us capture how the world really works: where people belong to groups, and those groups shape their outcome.
                                         Instead of pretending everyone is completely independent, mixed models admit that context matters!
                                         """,

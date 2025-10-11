@@ -95,10 +95,9 @@ body {
   padding: 1rem;
   background-color: var(--bg-alt);
   border-radius: 0.5rem;
-  scroll-margin-top: 90px;  /* so anchored sections aren't hidden under header */
+  scroll-margin-top: 90px;
 }
 
-/* Responsive Sidebar */
 @media (max-width: 768px) {
   .layout-container { position: relative; }
   .sidebar {
