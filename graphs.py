@@ -162,7 +162,7 @@ def build_mixed_effects_figure():
         legend={'title': {'text': "Master's Program University"}},
         template='plotly_white',
         height=700,
-        width=1200
+        width=1300
     )
 
     return fig
@@ -270,7 +270,7 @@ def build_predicted_vs_actual_figure(data: pd.DataFrame):
         xaxis_title="Predicted Salary",
         yaxis_title="Actual Salary",
         template="plotly_white",
-        width=1200,
+        width=1300,
         height=700,
         updatemenus=[{
             "buttons": buttons,

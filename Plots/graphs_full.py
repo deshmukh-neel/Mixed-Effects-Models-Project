@@ -183,7 +183,7 @@ def graphs_full(data_file):
         xaxis_title="Predicted Salary",
         yaxis_title="Actual Salary",
         template="plotly_white",
-        width=1200,
+        width=1300,
         height=700,
         updatemenus=[{
             "buttons": buttons,

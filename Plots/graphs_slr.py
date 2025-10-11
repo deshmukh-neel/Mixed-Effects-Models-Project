@@ -175,6 +175,6 @@ def graph_slr(data_file):
             bordercolor="rgba(0,0,0,0)"
         )]
     )
-    fig.update_layout(width=1200, height=700)
+    fig.update_layout(width=1300, height=700)
 
     return fig

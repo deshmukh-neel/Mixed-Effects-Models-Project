@@ -412,10 +412,14 @@ def serve_layout():
                                     html.H2("Conclusion", id= "conclusion"),
                                     dcc.Markdown(
                                         """
-                                        Using simulated data for random effects is tricky,
-                                        we cannot provide a OLS-Summary analysis like we did for the MLR section because the numbers looked a little weird, sorry! 
-                                        We hope our plots helped you visualize how random slopes and intercepts can help you create better models with clustered data sets!
-                                        To see some awesome visuals, more examples and dive deeper into the math behind these models, check out our reference section!
+                                       So there we have it. Our simulated, yet real(ish), experiment into what drives a post-grad entry-level data science job salary.
+                                        We didn't include other factors that drive DS salaries, like interviews, soft skills, or the status of the job market (*insert sad face emoji*).
+                                        If we wanted to take this even further, some other fun things to look at could be:
+                                        - Try the model with real data and similar variables.
+                                        - Take advantage of feature engineering to model interactions like Python x work experience.
+                                        
+                                        Mixed models help us capture how the world really works: where people belong to groups, and those groups shape their outcome.
+                                        Instead of pretending everyone is completely independent, mixed models admit that context matters!
                                         """,
                                         style={
                                             "fontSize": "18px",  
@@ -433,6 +437,7 @@ def serve_layout():
                                         - https://ourcodingclub.github.io/tutorials/mixed-models/#ranslopes
                                         - https://m-clark.github.io/mixed-models-with-R/random_intercepts.html
                                         - https://mfviz.com/hierarchical-models/
+                                        - https://users.phhp.ufl.edu/rlp176/Courses/SurveyBiostat/LMM/RSmodels.html#:~:text=The%20random%20intercept%20model%20assumes,1i)=σu01
 
                                         """,
                                         style={
